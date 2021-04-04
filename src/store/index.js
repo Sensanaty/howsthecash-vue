@@ -1,11 +1,11 @@
 import "es6-promise";
 import { createStore, createLogger } from "vuex";
 
-import users from "./modules/users";
+import user from "./modules/user";
 
 export const store = createStore({
     modules: {
-      users
+      user
     },
     strict: import.meta.env.DEV,
     plugins: import.meta.env.DEV ? [createLogger()] : []

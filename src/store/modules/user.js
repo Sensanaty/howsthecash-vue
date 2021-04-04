@@ -1,14 +1,16 @@
 import { $axios } from "../../lib/axiosConfig";
 
-const state = () => ({
-  loggedIn: false,
-  token: "",
+const initialState = {
+  loggedIn: !!localStorage.getItem("token"),
+  token: localStorage.getItem("token") || "",
   user: {
     id: 0,
     username: "",
     email: ""
   }
-});
+};
+
+const state = {...initialState};
 
 const getters = {
   userDetails: (state) => {
@@ -31,26 +33,43 @@ const mutations = {
     };
   },
   setToken(state, payload) {
+    state.loggedIn = true;
     state.token = payload;
     localStorage.setItem("token", payload);
-    state.loggedIn = true;
+  },
+  reset(state) {
+    state.loggedIn = false;
+    localStorage.removeItem("token");
+    Object.assign(state, initialState);
   }
 };
 
 const actions = {
-  async login( { commit }, payload) {
+  async login({ commit }, payload) {
     $axios.post("/authenticate", {
         username: payload.username,
         password: payload.password
     }).then(response => {
       commit("setToken", response.data.token);
-      commit("set", { key: "user", data: {
+      commit("setUser", {
         id: response.data.user.id,
         username: response.data.user.username,
         email: response.data.user.email
-      }});
+      });
     });
   },
+  async logout({ commit }) {
+    commit("reset");
+  },
+  async fetchUserInfo({ commit }) {
+    $axios.get("/users").then(response => {
+      commit("setUser", {
+        id: response.data.user.id,
+        username: response.data.user.username,
+        email: response.data.user.email
+      });
+    });
+  }
 };
 
 export default {
