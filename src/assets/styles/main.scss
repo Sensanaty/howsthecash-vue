@@ -1,0 +1,9 @@
+@import "./mixins.scss";
+
+@include font("Aeonik Bold", "../fonts/Aeonik/Aeonik-Bold", "bold");
+
+html, body {
+  font-family: "Aeonik Bold", sans-serif;
+  background: #141414;
+  color: #fdfdfd;
+}

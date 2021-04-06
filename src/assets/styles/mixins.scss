@@ -1,0 +1,15 @@
+@mixin font($font-family, $font-file, $weight: "normal", $style: "normal") {
+  @font-face {
+    font-family: $font-family;
+    src: url($font-file +'.eot');
+    // If the user has the font locally, use that
+    src: local($font-file),
+    url($font-file + '.eot?#iefix') format('embedded-opentype'),
+    url($font-file + '.woff') format('woff'),
+    url($font-file + '.ttf') format('truetype'),
+    url($font-file + '.svg#aller') format('svg');
+    font-weight: $weight;
+    font-style: $style;
+    font-display: swap;
+  }
+}
