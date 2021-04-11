@@ -1,13 +1,18 @@
 import { $axios } from "../../lib/axiosConfig";
+import { router } from "../../router";
 
 const initialState = {
-  loggedIn: !!localStorage.getItem("token"),
-  token: localStorage.getItem("token") || "",
+  loggedIn: false,
+  token: "",
   user: {
     id: 0,
     username: "",
-    email: ""
-  }
+    email: "",
+  },
+  error: {
+    message: "",
+    status: null,
+  },
 };
 
 const state = {...initialState};
@@ -18,6 +23,12 @@ const getters = {
   },
   loggedIn: (state) => {
     return state.loggedIn;
+  },
+  token: (state) => {
+    return state.token;
+  },
+  error: (state) => {
+    return state.error;
   }
 };
 
@@ -33,14 +44,27 @@ const mutations = {
     };
   },
   setToken(state, payload) {
-    state.loggedIn = true;
     state.token = payload;
+    if (typeof state.token !== "undefined") {
+      state.loggedIn = true;
+    }
     localStorage.setItem("token", payload);
   },
+  setError(state, payload) {
+    state.error = {
+      message: payload.message,
+      status: payload.status
+    };
+  },
   reset(state) {
-    state.loggedIn = false;
     localStorage.removeItem("token");
     Object.assign(state, initialState);
+  },
+  resetError(state) {
+    state.error = {
+      message: "",
+      status: null
+    };
   }
 };
 
@@ -50,16 +74,40 @@ const actions = {
         username: payload.username,
         password: payload.password
     }).then(response => {
+      commit("resetError");
       commit("setToken", response.data.token);
       commit("setUser", {
         id: response.data.user.id,
         username: response.data.user.username,
         email: response.data.user.email
       });
+      router.push({ path: "/" });
+    }).catch(error => {
+      commit("setError", {
+        message: error.response.data.error,
+        status: error.response.status
+      });
+    });
+  },
+  async signup({ commit }, payload) {
+    $axios.post("/users", {
+      username: payload.username,
+      password: payload.password,
+      email: payload.email || ""
+    }).then(response => {
+      commit("resetError");
+      commit("setToken", response.data.token);
+      commit("setUser", {
+        id: response.data.user.id,
+        username: response.data.user.username,
+        email: response.data.user.email
+      });
+      router.push({ path: "/dashboard" });
     });
   },
   async logout({ commit }) {
     commit("reset");
+    await router.push("/");
   },
   async fetchUserInfo({ commit }) {
     $axios.get("/users").then(response => {
@@ -68,6 +116,7 @@ const actions = {
         username: response.data.user.username,
         email: response.data.user.email
       });
+      commit("setToken", localStorage.getItem("token"));
     });
   }
 };
