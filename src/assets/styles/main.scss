@@ -1,9 +1,80 @@
 @import "./mixins.scss";
+@import "./variables";
 
 @include font("Aeonik Bold", "../fonts/Aeonik/Aeonik-Bold", "bold");
+@include font("ParseGrotesk Bold", "../fonts/ParseGrotesk/ParseGrotesk-Bold", "bold");
 
 html, body {
   font-family: "Aeonik Bold", sans-serif;
   background: #141414;
-  color: #fdfdfd;
+  color: #FDFDFD;
+}
+
+// This will apply to pages/login/index.vue and pages/signup/index.vue
+.form-wrapper {
+  display: flex;
+  flex-flow: column wrap;
+  overflow: hidden;
+  width: 30%;
+  justify-content: center;
+  align-items: center;
+  margin: 10% auto 0 auto;
+  background: lighten(#141414, 3);
+  padding: 20px 20px 10px 20px;
+  border-radius: 3px;
+
+  h1 {
+    padding: 0;
+    margin: 15px 0;
+  }
+
+  p {
+    font-size: 0.9rem;
+
+    a {
+      color: white;
+      transition: color 120ms ease-in-out;
+
+      &:hover {
+        color: #cacaca;
+      }
+    }
+  }
+
+  label {
+    margin: 5px;
+    font-size: 1.3rem;
+  }
+
+  input {
+    background: #f2f2f2;
+    border: none;
+    margin: 0 0 20px 0;
+    padding: 10px;
+    border-radius: 5px;
+
+    &.input-error {
+      outline: none;
+      border: 2px solid $error;
+      border-radius: 5px;
+    }
+  }
+
+  button {
+    background: $highlight;
+    color: #242424;
+    border: none;
+    cursor: pointer;
+    padding: 10px 30px;
+
+    &:active, &:focus {
+
+    }
+  }
+
+  .error-message {
+    margin-top: 10px;
+    height: 25px;
+    color: $error;
+  }
 }
